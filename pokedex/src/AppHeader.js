@@ -1,9 +1,13 @@
 import React from 'react'
 
-const AppHeader = () => {
+function AppHeader() {
   return (
-    <div id='title'>
-        <h1>myPokedex</h1>
+    <div>
+        <ul>
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+        </ul>
     </div>
   )
 }

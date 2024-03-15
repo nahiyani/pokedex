@@ -9,6 +9,18 @@ html{
   width: 100%;
 }
 
+#title:hover{
+  background-color: rgb(128, 128, 114);
+  transition: 0.75s;
+  
+  & #myPokedex{
+    color: rgb(255, 255, 255);
+    transform: scale(1.025);
+    transition: 0.75s;
+  }
+
+}
+
 #title{
   font-size: 50px;
   color: rgb(51, 50, 48);
@@ -16,5 +28,34 @@ html{
   align-items: center;
   justify-content: center;
   width: 100%;
+}
+
+#stats{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+p{
+  color: black;
+}
+
+#search{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  padding-top: 50px;
+  
+}
+
+#searchbar{
+  width: 50%;
+  height: 50px;
+  border-radius: 15px;
+  border: none;
+  padding-left: 20px;
+  border-color: green;
 }
 
