@@ -1,55 +1,58 @@
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import { useState, useEffect } from 'react';
 
 function App() {
-  
-  //API URL
-  const URL = "file:///C:/Users/nahiy/pokedex/pokedex/pokedex.json";
-  const [pokemonData, setPokemonData] = useState([]);
-
+  const [pokemonData, setPokemonData] = useState(null);
   const [error, setError] = useState(null);
 
-  // Fetch data using useEffect hook
-  useEffect (() => {
-    const fetchData = async () => {
+  useEffect(() => {
+    const fetchPokemonData = async () => {
       try {
-        const response = await fetch(URL);
+        const response = await fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json');
         if (!response.ok) {
-          throw new Error('Failed to fetch data');
+          throw new Error('Failed to fetch Pokémon data');
         }
         const data = await response.json();
         setPokemonData(data);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data. Please try again later.');
+        console.error('Error fetching Pokémon data:', error);
+        setError('Error fetching Pokémon data. Please try again later.');
       }
     };
-    fetchData();
+
+    fetchPokemonData();
   }, []);
-  
+
   return (
-    <div id='stats'>
-      {/* Render each individual Pokémon */}
-      {pokemonData.map(pokemon => (
-        <div key={pokemon.id}>
-          <h2>{pokemon.name.english}</h2>
-          <p>Japanese: {pokemon.name.japanese}</p>
-          <p>Chinese: {pokemon.name.chinese}</p>
-          <p>French: {pokemon.name.french}</p>
-          <p>Type: {pokemon.type.join(', ')}</p>
-          <p>Base Stats:</p>
-          <ul>
-            <li>HP: {pokemon.base.HP}</li>
-            <li>Attack: {pokemon.base.Attack}</li>
-            <li>Defense: {pokemon.base.Defense}</li>
-            <li>Special Attack: {pokemon.base['Sp. Attack']}</li>
-            <li>Special Defense: {pokemon.base['Sp. Defense']}</li>
-            <li>Speed: {pokemon.base.Speed}</li>
-          </ul>
+    <div>
+      {error ? (
+        <p>{error}</p>
+      ) : (
+        <div className="pokemon-container">
+        {pokemonData ? (
+          pokemonData.map(pokemon => (
+        <div key={pokemon.id} className="pokemon-card">
+        <h2>{pokemon.name.english}</h2>
+        <div className="stats">
+          <p>#{pokemon.id}</p>
+          <p>Types: {pokemon.type.join(', ')}</p>
+          <p>HP: {pokemon.base.HP}</p>
+          <p>Attack: {pokemon.base.Attack}</p>
+          <p>Defense: {pokemon.base.Defense}</p>
+          <p>Sp. Atk: {pokemon.base["Sp. Attack"]}</p>
+          <p>Sp. Def: {pokemon.base["Sp. Defense"]}</p>
+          <p>Speed: {pokemon.base.Speed}</p>
         </div>
-      ))}
+      </div>
+    ))
+  ) : (
+    <p>Loading Pokémon data...</p>
+  )}
+</div>
+      )}
     </div>
   );
+  
 }
 
 export default App;
