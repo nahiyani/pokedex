@@ -1,7 +1,6 @@
 html {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-weight: 700;
   background-color: beige;
 }
 
@@ -21,7 +20,6 @@ html {
     transform: scale(1.025);
     transition: 0.75s;
   }
-
 }
 
 #title{
@@ -34,14 +32,13 @@ html {
 }
 
 #stat{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 25px;
   background-color: white;
   border-radius: 15px;
   border: solid 2px black;
 }
+
+/*
+*/
 
 #search{
   display: flex;
@@ -65,36 +62,29 @@ html {
   padding-left: 20px;
 }
 
-.basestats{
-  color: black;
-  border: solid 2px black ;
-  background-color: white;
-  border-radius: 10px;
-  display: block;
-  font-weight: bold;
-  padding: 10px 20px;
-}
-
-.pokemon-container {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.pokemon-card {
-  border: 1px solid #ccc;
+.pokemon-table tr {
+  border: 1px solid #000000;
   border-radius: 5px;
   margin: 10px;
   padding: 10px;
 }
 
-.stats {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px; /* Add some space between the stats */
+.pokemon-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.stats p {
-  margin: 0;
+.pokemon-table th, .pokemon-table td {
+  padding: 20px; 
+  text-align: center;
+  border: 1px solid #414040;
 }
 
+.pokemon-table th {
+  background-color: #f2f2f2; 
+}
+
+.pokemon-table th:hover {
+  cursor: pointer;
+  background-color: #aca5a5;
+}

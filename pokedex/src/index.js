@@ -6,6 +6,7 @@ import AppHeader from './AppHeader';
 import AppTitle from './AppTitle';
 import reportWebVitals from './reportWebVitals';
 import Search from './Search';
+import Footer from './Footer';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -13,6 +14,7 @@ ReactDOM.render(
     <AppTitle />
     <Search />
     <App />
+    <Footer />
   </React.StrictMode>,
   document.getElementById('root')
 );
