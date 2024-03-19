@@ -6,7 +6,7 @@ function TypeSort({ filterPokemonByType }) {
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/types.json')
       .then(response => response.json())
-      .then(data => setTypes(data.map(type => type.english)))
+      .then(data => setTypes(data))
       .catch(error => console.error('Error fetching types:', error));
   }, []);
 
@@ -17,10 +17,10 @@ function TypeSort({ filterPokemonByType }) {
   return (
     <div id='typesort-div'>
       <select id='typesort' onChange={handleTypeChange}>
-        <option value="">All Types</option>
+        <option value="">All</option>
         {types.map((type, index) => (
-          <option key={index} value={type}>
-            {type}
+          <option key={index} value={type.english}>
+            {`${type.english}`}
           </option>
         ))}
       </select>
@@ -29,4 +29,3 @@ function TypeSort({ filterPokemonByType }) {
 }
 
 export default TypeSort;
-

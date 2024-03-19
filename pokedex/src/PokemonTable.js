@@ -4,8 +4,6 @@ const PokemonTable = ({ pokemonData }) => {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
 
-    
-
   const handleSort = (attr) => {
     if (sortBy === attr) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');

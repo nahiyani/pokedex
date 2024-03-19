@@ -1,14 +1,14 @@
 const express = require('express');
+const fs = require('fs');
 const app = express();
-const pokemonData = require('pokemon.json');
+const PORT = 3000;
 
-// Define a GET route to retrieve Pokémon data
+const pokemonData = JSON.parse(fs.readFileSync('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json'));
+
 app.get('/pokemon', (req, res) => {
   res.json(pokemonData);
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

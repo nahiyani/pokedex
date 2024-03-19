@@ -15,6 +15,15 @@ body{
   width: 100%;
 }
 
+#title{
+  font-size: 50px;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 #title:hover{
   background-color: rgb(255, 255, 255);
   transition: 0.75s;
@@ -26,12 +35,10 @@ body{
   }
 }
 
-#title{
-  font-size: 50px;
+h4{
+  font-size: 25px;
   color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: inline;
   width: 100%;
 }
 
@@ -89,7 +96,7 @@ body{
   background-color: #e3e1e1; 
 }
 
-#type{
+#default-header{
   cursor:default;
 }
 
@@ -106,10 +113,15 @@ body{
 }
 
 #typesort{
-  width: 15%;
+  width: 20%;
   border-radius: 15px;
   height: 40px;
   padding-left: 15px;
+  padding-right: 15px;
+}
+
+#typesort:hover{
+  cursor: pointer;
 }
 
 #pokemonimage{
@@ -134,4 +146,16 @@ body{
   transition:0.75s;
   transform: scale(1.001);
   border: solid 1px black;
+}
+
+#footer{
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:rgb(76, 143, 245);
+}
+
+h3{
+  color: white;
 }

@@ -1,22 +1,68 @@
+//imports
 import React, { useState, useEffect } from 'react';
+import PokemonInfo from './PokemonInfo';
+import TypeSort from './TypeSort';
 import './App.css';
 
+//returns the app components
 function App() {
+  
+  //hook variables
   const [pokemonData, setPokemonData] = useState(null);
+  const [selectedPokemonId, setSelectedPokemonId] = useState(null);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
 
+  //opens a model based on the Pokemon ID
+  const handlePokemonDetailsClick = (pokemonId) => {
+    setSelectedPokemonId(pokemonId);
+    setSelectedPokemon(pokemonData.find(pokemon => pokemon.id === pokemonId));
+  };
+
+  //filters the Pokemon by type
+  const filterPokemonByType = (type) => {
+    if (type === '') {
+      setFilteredPokemonData(pokemonData);
+    } else {
+      const filteredPokemon = pokemonData.filter(pokemon => pokemon.type.includes(type));
+      setFilteredPokemonData(filteredPokemon);
+    }
+  };
+
+  //useEffect hook to fetch data from JSON file
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
       .then(response => response.json())
-      .then(data => setPokemonData(data))
+      .then(data => {
+        setPokemonData(data);
+        setFilteredPokemonData(data);
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
+  const [filteredPokemonData, setFilteredPokemonData] = useState(null);
+
+  const handleSort = (key) => {
+    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    setSortConfig({ key, direction });
+  };
+
+  //returns the HTML
   return (
     <div className="App">
       <main>
         <div className="container">
-          {pokemonData ? (
-            <PokemonTable pokemonData={pokemonData} />
+          <TypeSort filterPokemonByType={filterPokemonByType} />
+          {filteredPokemonData ? (
+            <>
+              <PokemonTable
+                pokemonData={filteredPokemonData}
+                onPokemonDetails={handlePokemonDetailsClick}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+              />
+              {selectedPokemonId && <PokemonInfo pokemon={selectedPokemon} />}
+            </>
           ) : (
             <p>Loading Pokémon data...</p>
           )}
@@ -26,93 +72,48 @@ function App() {
   );
 }
 
-function PokemonTable({ pokemonData }) {
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort }) {
+  const { key, direction } = sortConfig;
 
-  const handleSort = key => {
-    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    setSortConfig({ key, direction });
+  //sorting functions
+  const sortingFunctions = {
+    id: (a, b) => a.id - b.id,
+    name: (a, b) => a.name.english.localeCompare(b.name.english),
+    total: (a, b) => calculateTotal(a) - calculateTotal(b),
+    hp: (a, b) => a.base.HP - b.base.HP,
+    attack: (a, b) => a.base.Attack - b.base.Attack,
+    defense: (a, b) => a.base.Defense - b.base.Defense,
+    spAttack: (a, b) => a.base['Sp. Attack'] - b.base['Sp. Attack'],
+    spDefense: (a, b) => a.base['Sp. Defense'] - b.base['Sp. Defense'],
+    speed: (a, b) => a.base.Speed - b.base.Speed,
   };
-
-  const sortByName = (a, b) => {
-    const nameA = a.name.english.toLowerCase();
-    const nameB = b.name.english.toLowerCase();
-    if (nameA < nameB) return -1;
-    if (nameA > nameB) return 1;
-    return 0;
-  };
-
-  const sortById = (a, b) => a.id - b.id;
-  const sortByTotal = (a, b) => calculateTotal(a) - calculateTotal(b);
-  const sortByHP = (a, b) => a.base.HP - b.base.HP;
-  const sortByAttack = (a, b) => a.base.Attack - b.base.Attack;
-  const sortByDefense = (a, b) => a.base.Defense - b.base.Defense;
-  const sortBySpAttack = (a, b) => a.base['Sp. Attack'] - b.base['Sp. Attack'];
-  const sortBySpDefense = (a, b) => a.base['Sp. Defense'] - b.base['Sp. Defense'];
-  const sortBySpeed = (a, b) => a.base.Speed - b.base.Speed;
-
-  const calculateTotal = pokemon => {
-    return Object.values(pokemon.base).reduce((acc, val) => acc + val, 0);
-  };
-
-  let sortingFunction;
-  switch (sortConfig.key) {
-    case 'id':
-      sortingFunction = sortById;
-      break;
-    case 'name':
-      sortingFunction = sortByName;
-      break;
-    case 'total':
-      sortingFunction = sortByTotal;
-      break;
-    case 'HP':
-      sortingFunction = sortByHP;
-      break;
-    case 'Attack':
-      sortingFunction = sortByAttack;
-      break;
-    case 'Defense':
-      sortingFunction = sortByDefense;
-      break;
-    case 'Sp. Attack':
-      sortingFunction = sortBySpAttack;
-      break;
-    case 'Sp. Defense':
-      sortingFunction = sortBySpDefense;
-      break;
-    case 'Speed':
-      sortingFunction = sortBySpeed;
-      break;
-    default:
-      sortingFunction = sortById;
-      break;
-  }
 
   const sortedPokemonData = [...pokemonData].sort((a, b) => {
-    if (sortConfig.direction === 'asc') {
-      return sortingFunction(a, b);
+    const sortFunction = sortingFunctions[key];
+    if (direction === 'asc') {
+      return sortFunction(a, b);
     } else {
-      return sortingFunction(b, a); 
+      return sortFunction(b, a);
     }
   });
 
   return (
+    //creates a table containing all the Pokemon and relevant data
     <table className="pokemon-table">
       <thead>
         <tr>
           <th>Image</th>
           <th onClick={() => handleSort('id')}>ID</th>
           <th onClick={() => handleSort('name')}>Name</th>
-          <th id='type'>Type</th>
+          <th id='default-header'>Type</th>
           <th onClick={() => handleSort('total')}>Total</th>
-          <th onClick={() => handleSort('HP')}>HP</th>
-          <th onClick={() => handleSort('Attack')}>Attack</th>
-          <th onClick={() => handleSort('Defense')}>Defense</th>
-          <th onClick={() => handleSort('Sp. Attack')}>Sp. Attack</th>
-          <th onClick={() => handleSort('Sp. Defense')}>Sp. Defense</th>
-          <th onClick={() => handleSort('Speed')}>Speed</th>
-          <th></th>
+          <th onClick={() => handleSort('hp')}>HP</th>
+          <th onClick={() => handleSort('attack')}>Attack</th>
+          <th onClick={() => handleSort('defense')}>Defense</th>
+          <th onClick={() => handleSort('spAttack')}>Sp. Attack</th>
+          <th onClick={() => handleSort('spDefense')}>Sp. Defense</th>
+          <th onClick={() => handleSort('speed')}>Speed</th>
+          <th id='default-header'></th>
         </tr>
       </thead>
       <tbody>
@@ -123,7 +124,7 @@ function PokemonTable({ pokemonData }) {
             <td>{pokemon.name.english}</td>
             <td>
               {pokemon.type.map((type, index) => (
-              <div key={index}>{type}</div>
+                <div key={index}>{type}</div>
               ))}
             </td>
             <td>{calculateTotal(pokemon)}</td>
@@ -133,7 +134,7 @@ function PokemonTable({ pokemonData }) {
             <td>{pokemon.base["Sp. Attack"]}</td>
             <td>{pokemon.base["Sp. Defense"]}</td>
             <td>{pokemon.base.Speed}</td>
-            <td><button id='more-details-button'>More</button></td>
+            <td><button id='more-details-button' onClick={() => onPokemonDetails(pokemon.id)}>More</button></td>
           </tr>
         ))}
       </tbody>
@@ -142,3 +143,7 @@ function PokemonTable({ pokemonData }) {
 }
 
 export default App;
+
+function calculateTotal(pokemon) {
+  return Object.values(pokemon.base).reduce((acc, val) => acc + val, 0);
+}
