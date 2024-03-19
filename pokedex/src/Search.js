@@ -14,7 +14,7 @@ function Search({ pokemonData, setSelectedPokemon }) {
     setSearchQuery(query);
     const filtered = pokemonData.filter(pokemon => pokemon.name.english.toLowerCase().includes(query));
     setFilteredPokemon(filtered);
-    setSelectedPokemon(filtered[0]); // Select the first result by default
+    setSelectedPokemon(filtered[0]);
   };
 
   return (

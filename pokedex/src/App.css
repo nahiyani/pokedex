@@ -1,7 +1,11 @@
 html {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background-color: beige;
+  background-color: rgb(76, 143, 245);
+}
+
+body{
+  font-family: 'Raleway', sans-serif;
 }
 
 .App{
@@ -12,11 +16,11 @@ html {
 }
 
 #title:hover{
-  background-color: rgb(128, 128, 114);
+  background-color: rgb(255, 255, 255);
   transition: 0.75s;
   
   & #myPokedex{
-    color: rgb(255, 255, 255);
+    color: rgb(76, 143, 245);
     transform: scale(1.025);
     transition: 0.75s;
   }
@@ -24,7 +28,7 @@ html {
 
 #title{
   font-size: 50px;
-  color: rgb(51, 50, 48);
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,8 +41,7 @@ html {
   border: solid 2px black;
 }
 
-/*
-*/
+/* */
 
 #search{
   display: flex;
@@ -62,6 +65,13 @@ html {
   padding-left: 20px;
 }
 
+.pokemon-table {
+  width: 100%;
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #ffffff;
+}
+
 .pokemon-table tr {
   border: 1px solid #000000;
   border-radius: 5px;
@@ -69,22 +79,59 @@ html {
   padding: 10px;
 }
 
-.pokemon-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
 .pokemon-table th, .pokemon-table td {
   padding: 20px; 
   text-align: center;
-  border: 1px solid #414040;
+  border: 0.5px solid #414040;
 }
 
 .pokemon-table th {
-  background-color: #f2f2f2; 
+  background-color: #e3e1e1; 
+}
+
+#type{
+  cursor:default;
 }
 
 .pokemon-table th:hover {
   cursor: pointer;
   background-color: #aca5a5;
+}
+
+#typesort-div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 25px;
+}
+
+#typesort{
+  width: 15%;
+  border-radius: 15px;
+  height: 40px;
+  padding-left: 15px;
+}
+
+#pokemonimage{
+  width: 80px;
+  height: 60px;
+}
+
+#more-details-button{
+  background-color:rgb(76, 143, 245);
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  width: 70px;
+  height: 30px;
+  border: none;
+}
+
+#more-details-button:hover {
+  cursor: pointer;
+  background-color: #ffffff;
+  color:rgb(76, 143, 245);
+  transition:0.75s;
+  transform: scale(1.001);
+  border: solid 1px black;
 }

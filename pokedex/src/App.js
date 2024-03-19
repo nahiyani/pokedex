@@ -42,7 +42,6 @@ function PokemonTable({ pokemonData }) {
     return 0;
   };
 
-  // Separate sorting function
   const sortById = (a, b) => a.id - b.id;
   const sortByTotal = (a, b) => calculateTotal(a) - calculateTotal(b);
   const sortByHP = (a, b) => a.base.HP - b.base.HP;
@@ -86,16 +85,15 @@ function PokemonTable({ pokemonData }) {
       sortingFunction = sortBySpeed;
       break;
     default:
-      sortingFunction = sortById; // Default sorting by id
+      sortingFunction = sortById;
       break;
   }
 
-  // Sort the Pokemon data using the selected sorting function
   const sortedPokemonData = [...pokemonData].sort((a, b) => {
     if (sortConfig.direction === 'asc') {
       return sortingFunction(a, b);
     } else {
-      return sortingFunction(b, a); // Reverse sorting for descending order
+      return sortingFunction(b, a); 
     }
   });
 
@@ -103,9 +101,10 @@ function PokemonTable({ pokemonData }) {
     <table className="pokemon-table">
       <thead>
         <tr>
+          <th>Image</th>
           <th onClick={() => handleSort('id')}>ID</th>
           <th onClick={() => handleSort('name')}>Name</th>
-          <th>Type</th>
+          <th id='type'>Type</th>
           <th onClick={() => handleSort('total')}>Total</th>
           <th onClick={() => handleSort('HP')}>HP</th>
           <th onClick={() => handleSort('Attack')}>Attack</th>
@@ -113,11 +112,13 @@ function PokemonTable({ pokemonData }) {
           <th onClick={() => handleSort('Sp. Attack')}>Sp. Attack</th>
           <th onClick={() => handleSort('Sp. Defense')}>Sp. Defense</th>
           <th onClick={() => handleSort('Speed')}>Speed</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         {sortedPokemonData.map(pokemon => (
           <tr key={pokemon.id}>
+            <td><img id='pokemonimage' src={`https://img.pokemondb.net/artwork/${pokemon.name.english.toLowerCase()}.jpg`} alt={pokemon.name.english} /></td>
             <td>{pokemon.id}</td>
             <td>{pokemon.name.english}</td>
             <td>
@@ -132,6 +133,7 @@ function PokemonTable({ pokemonData }) {
             <td>{pokemon.base["Sp. Attack"]}</td>
             <td>{pokemon.base["Sp. Defense"]}</td>
             <td>{pokemon.base.Speed}</td>
+            <td><button id='more-details-button'>More</button></td>
           </tr>
         ))}
       </tbody>

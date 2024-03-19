@@ -2,17 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import AppHeader from './AppHeader';
 import AppTitle from './AppTitle';
 import reportWebVitals from './reportWebVitals';
 import Search from './Search';
 import Footer from './Footer';
+import TypeSort from './TypeSort';
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppHeader />
     <AppTitle />
     <Search />
+    <TypeSort />
     <App />
     <Footer />
   </React.StrictMode>,
