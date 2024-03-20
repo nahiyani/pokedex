@@ -10,9 +10,9 @@ function TypeSort({ filterPokemon }) {
       .catch(error => console.error('Error fetching types:', error));
   }, []);
 
-  const handleTypeChange = (event) => {
+  const handleTypeChange = event => {
     const type = event.target.value;
-    filterPokemon(type, ''); // Pass the selected type and an empty search query to filterPokemon function
+    filterPokemon(type);
   };
 
   return (

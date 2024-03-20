@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-function Search({ filterPokemon }) {
-  const [searchQuery, setSearchQuery] = useState('');
+function Search({ filterPokemon, setSearchQuery }) {
+  const [searchQuery, setSearchQueryLocal] = useState('');
 
   const handleSearch = event => {
     const query = event.target.value;
+    setSearchQueryLocal(query);
     setSearchQuery(query);
-    filterPokemon('', query); // Pass an empty type and the search query to filterPokemon function
   };
 
   return (

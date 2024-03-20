@@ -1,71 +1,49 @@
-// imports
 import React, { useState, useEffect } from 'react';
 import PokemonInfo from './PokemonInfo';
 import TypeSort from './TypeSort';
 import Search from './Search';
 import './App.css';
 
-//colours of each of the codes
 const typeColors = {
-  Grass: '#78C850',
-  Poison: '#A040A0',
-  Fire: '#F08030',
-  Water: '#6890F0',
-  Bug: '#A8B820',
-  Normal: '#A8A878',
-  Electric: '#F8D030',
-  Ground: '#E0C068',
-  Fairy: '#EE99AC',
-  Fighting: '#C03028',
-  Psychic: '#F85888',
-  Rock: '#B8A038',
-  Ghost: '#705898',
-  Ice: '#98D8D8',
-  Dragon: '#7038F8',
-  Dark: '#705848',
-  Steel: '#B8B8D0',
+  Grass: '#78C850', Poison: '#A040A0',  Fire: '#F08030',  Water: '#6890F0',  Bug: '#A8B820',  Normal: '#A8A878',
+  Electric: '#F8D030',  Ground: '#E0C068',  Fairy: '#EE99AC',  Fighting: '#C03028',  Psychic: '#F85888',  Rock: '#B8A038',
+  Ghost: '#705898',  Ice: '#98D8D8',  Dragon: '#7038F8',   Dark: '#705848',  Steel: '#B8B8D0',
   Flying: '#A890F0',
 };
 
-// returns the app components
 function App() {
-  // hook variables
   const [pokemonData, setPokemonData] = useState(null);
   const [selectedPokemonId, setSelectedPokemonId] = useState(null);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
-  const [filteredPokemonData, setFilteredPokemonData] = useState(null); // State for filtered Pokemon data
+  const [filteredPokemonData, setFilteredPokemonData] = useState(null);
+  const [totalItems, setTotalItems] = useState(0);
+  const [filterOptions, setFilterOptions] = useState({ type: '', searchQuery: '' });
 
-  // opens a model based on the Pokemon ID
   const handlePokemonDetailsClick = (pokemonId) => {
     setSelectedPokemonId(pokemonId);
     setSelectedPokemon(filteredPokemonData.find(pokemon => pokemon.id === pokemonId));
   };
 
-  // filters the Pokemon by type and search query
-  const filterPokemon = (type, searchQuery) => {
-    let filteredData = pokemonData;
-
-    if (type !== '') {
-      filteredData = filteredData.filter(pokemon => pokemon.type.includes(type));
+  const filterPokemon = () => {
+    if (pokemonData) {
+      const { type, searchQuery } = filterOptions;
+      const filteredData = pokemonData.filter(pokemon => {
+        const matchesType = type === '' || pokemon.type.includes(type);
+        const matchesSearch = searchQuery === '' || pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesType && matchesSearch;
+      });
+    
+      setFilteredPokemonData(filteredData);
     }
-
-    if (searchQuery !== '') {
-      filteredData = filteredData.filter(pokemon =>
-        pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    setFilteredPokemonData(filteredData);
   };
-
-  // useEffect hook to fetch data from JSON file
+ 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
       .then(response => response.json())
       .then(data => {
         setPokemonData(data);
-        setFilteredPokemonData(data); // Initialize filteredPokemonData with all Pokemon data
+        setFilteredPokemonData(data);
       })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
@@ -75,12 +53,17 @@ function App() {
     setSortConfig({ key, direction });
   };
 
+  useEffect(() => {
+    filterPokemon();
+  }, [filterOptions, pokemonData]);
+
   return (
     <div className="App">
       <main>
         <div className="container">
-          <Search filterPokemon={filterPokemon} />
-          <TypeSort filterPokemon={filterPokemon} />
+          <Search filterPokemon={filterPokemon} setSearchQuery={query => setFilterOptions(prevOptions => ({ ...prevOptions, searchQuery: query }))} />
+          <TypeSort filterPokemon={type => setFilterOptions(prevOptions => ({ ...prevOptions, type }))} />
+          <TotalItemsCounter totalItems={totalItems} />
           {filteredPokemonData ? (
             <>
               <PokemonTable
@@ -88,6 +71,7 @@ function App() {
                 onPokemonDetails={handlePokemonDetailsClick}
                 sortConfig={sortConfig}
                 handleSort={handleSort}
+                setTotalItems={setTotalItems}
               />
               {selectedPokemonId && <PokemonInfo pokemon={selectedPokemon} />}
             </>
@@ -100,10 +84,13 @@ function App() {
   );
 }
 
-function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort }) {
+function TotalItemsCounter({ totalItems }) {
+  return <p id='results-returned'>Results Returned: {totalItems}</p>;
+}
+
+function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, setTotalItems }) {
   const { key, direction } = sortConfig;
 
-  //sorting functions
   const sortingFunctions = {
     id: (a, b) => a.id - b.id,
     name: (a, b) => a.name.english.localeCompare(b.name.english),
@@ -116,17 +103,16 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort })
     speed: (a, b) => a.base.Speed - b.base.Speed,
   };
 
+  useEffect(() => {
+    setTotalItems(pokemonData.length);
+  }, [pokemonData, setTotalItems]);
+
   const sortedPokemonData = [...pokemonData].sort((a, b) => {
     const sortFunction = sortingFunctions[key];
-    if (direction === 'asc') {
-      return sortFunction(a, b);
-    } else {
-      return sortFunction(b, a);
-    }
+    return direction === 'asc' ? sortFunction(a, b) : sortFunction(b, a);
   });
 
   return (
-    //creates a table containing all the Pokemon and relevant data
     <table className="pokemon-table">
       <thead>
         <tr>
@@ -152,7 +138,7 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort })
             <td>{pokemon.name.english}</td>
             <td>
               {pokemon.type.map((type, index) => (
-                 <div key={index} style={{ backgroundColor: typeColors[type], padding: '5px', borderRadius: '15px', color: 'white', marginRight: '5px', width: '100px', fontWeight: 'bold' }}>{type}</div>
+                <div key={index} style={{ backgroundColor: typeColors[type], padding: '5px', borderRadius: '15px', color: 'white', marginRight: '5px', width: '100px', fontWeight: 'bold' }}>{type}</div>
               ))}
             </td>
             <td>{calculateTotal(pokemon)}</td>
@@ -170,8 +156,8 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort })
   );
 }
 
-export default App;
-
 function calculateTotal(pokemon) {
   return Object.values(pokemon.base).reduce((acc, val) => acc + val, 0);
 }
+
+export default App;
