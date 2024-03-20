@@ -1,6 +1,5 @@
 html {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
   background-color: rgb(76, 143, 245);
 }
 
@@ -48,8 +47,6 @@ h4{
   border: solid 2px black;
 }
 
-/* */
-
 #search{
   display: flex;
   align-items: center;
@@ -57,6 +54,7 @@ h4{
   width: 100%;
   height: 50px;
   padding: 50px 0px; 
+  font-family: 'Raleway', sans-serif;
 }
 
 #search:hover{
@@ -65,17 +63,23 @@ h4{
 }
 
 #searchbar{
-  width: 50%;
+  width: 750px;
   height: 50px;
   border-radius: 15px;
   border: none;
   padding-left: 20px;
 }
 
+#loading{
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+}
+
 .pokemon-table {
   width: 100%;
   border-collapse: collapse;
-  width: 100%;
   background-color: #ffffff;
 }
 
@@ -87,7 +91,7 @@ h4{
 }
 
 .pokemon-table th, .pokemon-table td {
-  padding: 20px; 
+  padding: 15px; 
   text-align: center;
   border: 0.5px solid #414040;
 }
@@ -118,6 +122,7 @@ h4{
   height: 40px;
   padding-left: 15px;
   padding-right: 15px;
+  font-family: 'Raleway', sans-serif;
 }
 
 #typesort:hover{
@@ -125,8 +130,8 @@ h4{
 }
 
 #pokemonimage{
-  width: 80px;
-  height: 60px;
+  width: 40px;
+  height: 30px;
 }
 
 #more-details-button{
@@ -137,6 +142,7 @@ h4{
   width: 70px;
   height: 30px;
   border: none;
+  font-family: 'Raleway', sans-serif;
 }
 
 #more-details-button:hover {
@@ -146,6 +152,7 @@ h4{
   transition:0.75s;
   transform: scale(1.001);
   border: solid 1px black;
+  font-family: 'Raleway', sans-serif;
 }
 
 #footer{

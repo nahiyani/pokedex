@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function TypeSort({ filterPokemonByType }) {
+function TypeSort({ filterPokemon }) {
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,8 @@ function TypeSort({ filterPokemonByType }) {
   }, []);
 
   const handleTypeChange = (event) => {
-    filterPokemonByType(event.target.value);
+    const type = event.target.value;
+    filterPokemon(type, ''); // Pass the selected type and an empty search query to filterPokemon function
   };
 
   return (

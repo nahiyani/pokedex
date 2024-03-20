@@ -1,20 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-function Search({ pokemonData, setSelectedPokemon }) {
+function Search({ filterPokemon }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredPokemon, setFilteredPokemon] = useState([]);
-
-  useEffect(() => {
-    if (!pokemonData) return;
-    setFilteredPokemon(pokemonData);
-  }, [pokemonData]);
 
   const handleSearch = event => {
-    const query = event.target.value.toLowerCase();
+    const query = event.target.value;
     setSearchQuery(query);
-    const filtered = pokemonData.filter(pokemon => pokemon.name.english.toLowerCase().includes(query));
-    setFilteredPokemon(filtered);
-    setSelectedPokemon(filtered[0]);
+    filterPokemon('', query); // Pass an empty type and the search query to filterPokemon function
   };
 
   return (
@@ -26,13 +18,6 @@ function Search({ pokemonData, setSelectedPokemon }) {
         value={searchQuery}
         onChange={handleSearch}
       />
-      <div>
-        {filteredPokemon.map(pokemon => (
-          <div key={pokemon.id}>
-            {pokemon.name.english}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
