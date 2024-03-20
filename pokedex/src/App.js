@@ -5,9 +5,9 @@ import Search from './Search';
 import './App.css';
 
 const typeColors = {
-  Grass: '#78C850', Poison: '#A040A0',  Fire: '#F08030',  Water: '#6890F0',  Bug: '#A8B820',  Normal: '#A8A878',
-  Electric: '#F8D030',  Ground: '#E0C068',  Fairy: '#EE99AC',  Fighting: '#C03028',  Psychic: '#F85888',  Rock: '#B8A038',
-  Ghost: '#705898',  Ice: '#98D8D8',  Dragon: '#7038F8',   Dark: '#705848',  Steel: '#B8B8D0',
+  Grass: '#78C850', Poison: '#A040A0', Fire: '#F08030', Water: '#6890F0', Bug: '#A8B820', Normal: '#A8A878',
+  Electric: '#F8D030', Ground: '#E0C068', Fairy: '#EE99AC', Fighting: '#C03028', Psychic: '#F85888', Rock: '#B8A038',
+  Ghost: '#705898', Ice: '#98D8D8', Dragon: '#7038F8', Dark: '#705848', Steel: '#B8B8D0',
   Flying: '#A890F0',
 };
 
@@ -19,10 +19,12 @@ function App() {
   const [filteredPokemonData, setFilteredPokemonData] = useState(null);
   const [totalItems, setTotalItems] = useState(0);
   const [filterOptions, setFilterOptions] = useState({ type: '', searchQuery: '' });
+  const [isModelOpen, setIsModelOpen] = useState(false); // State to control model visibility
 
   const handlePokemonDetailsClick = (pokemonId) => {
     setSelectedPokemonId(pokemonId);
     setSelectedPokemon(filteredPokemonData.find(pokemon => pokemon.id === pokemonId));
+    setIsModelOpen(true); // Open the model
   };
 
   const filterPokemon = () => {
@@ -33,11 +35,11 @@ function App() {
         const matchesSearch = searchQuery === '' || pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesType && matchesSearch;
       });
-    
+
       setFilteredPokemonData(filteredData);
     }
   };
- 
+
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
       .then(response => response.json())
@@ -61,8 +63,8 @@ function App() {
     <div className="App">
       <main>
         <div className="container">
-          <Search filterPokemon={filterPokemon} setSearchQuery={query => setFilterOptions(prevOptions => ({ ...prevOptions, searchQuery: query }))} />
-          <TypeSort filterPokemon={type => setFilterOptions(prevOptions => ({ ...prevOptions, type }))} />
+          <Search filterPokemon={filterPokemon} setSearchQuery={query => setFilterOptions(previousOptions => ({ ...previousOptions, searchQuery: query }))} />
+          <TypeSort filterPokemon={type => setFilterOptions(previousOptions => ({ ...previousOptions, type }))} />
           <TotalItemsCounter totalItems={totalItems} />
           {filteredPokemonData ? (
             <>
@@ -72,8 +74,9 @@ function App() {
                 sortConfig={sortConfig}
                 handleSort={handleSort}
                 setTotalItems={setTotalItems}
+                setOpenModel={setIsModelOpen}
               />
-              {selectedPokemonId && <PokemonInfo pokemon={selectedPokemon} />}
+              {isModelOpen && selectedPokemon && <PokemonInfo setOpenModel={setIsModelOpen} pokemonId={selectedPokemonId} />}
             </>
           ) : (
             <p id='loading'>Loading...</p>
@@ -88,7 +91,7 @@ function TotalItemsCounter({ totalItems }) {
   return <p id='results-returned'>Results Returned: {totalItems}</p>;
 }
 
-function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, setTotalItems }) {
+function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, setTotalItems, setOpenModel }) {
   const { key, direction } = sortConfig;
 
   const sortingFunctions = {
@@ -116,8 +119,8 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, s
     <table className="pokemon-table">
       <thead>
         <tr>
-          <th>Image</th>
-          <th onClick={() => handleSort('id')}>ID</th>
+          <th id='default-header'>Image</th>
+          <th onClick={() => handleSort('id')}>Number</th>
           <th onClick={() => handleSort('name')}>Name</th>
           <th id='default-header'>Type</th>
           <th onClick={() => handleSort('total')}>Total</th>
@@ -133,12 +136,18 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, s
       <tbody>
         {sortedPokemonData.map(pokemon => (
           <tr key={pokemon.id}>
-            <td><img id='pokemonimage' src={`https://img.pokemondb.net/artwork/${pokemon.name.english.toLowerCase()}.jpg`} alt={pokemon.name.english} /></td>
+            <td>
+              <img
+                id='pokemonimage'
+                src={`https://img.pokemondb.net/artwork/${pokemon.name.english.includes(' ') ? pokemon.name.english.split(' ').join('-').toLowerCase() : pokemon.name.english.toLowerCase()}.jpg`}
+                alt={pokemon.name.english}
+              />
+            </td>
             <td>{pokemon.id}</td>
             <td>{pokemon.name.english}</td>
             <td>
               {pokemon.type.map((type, index) => (
-                <div key={index} style={{ backgroundColor: typeColors[type], padding: '5px', borderRadius: '15px', color: 'white', marginRight: '5px', width: '100px', fontWeight: 'bold' }}>{type}</div>
+                <div id='type-colours' key={index} style={{ backgroundColor: typeColors[type] }}>{type}</div>
               ))}
             </td>
             <td>{calculateTotal(pokemon)}</td>

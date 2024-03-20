@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Search({ filterPokemon, setSearchQuery }) {
+function Search({ setSearchQuery }) {
   const [searchQuery, setSearchQueryLocal] = useState('');
 
   const handleSearch = event => {
@@ -14,7 +14,7 @@ function Search({ filterPokemon, setSearchQuery }) {
       <input
         type="text"
         id="searchbar"
-        placeholder="Search"
+        placeholder="Search name"
         value={searchQuery}
         onChange={handleSearch}
       />

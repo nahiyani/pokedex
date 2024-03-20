@@ -1,42 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import './Model.css';
+import './PokemonInfo.css';
 
-const PokemonInfo = ({ setOpenModel }) => {
-  const [pokemonData, setPokemonData] = useState(null);
+const PokemonInfo = ({ setOpenModel, pokemonId }) => {
+  const [pokemon, setPokemon] = useState(null);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json')
-      .then(response => response.json())
-      .then(data => setPokemonData(data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+    const fetchPokemon = async () => {
+      try {
+        const response = await fetch(`https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/pokedex.json`);
+        const data = await response.json();
+        const selectedPokemon = data.find(pokemon => pokemon.id === pokemonId);
+        setPokemon(selectedPokemon);
+      } catch (error) {
+        console.error('Error fetching Pokemon data:', error);
+      }
+    };
+
+    fetchPokemon();
+  }, [pokemonId]);
 
   const calculateTotal = (pokemon) => {
     return Object.values(pokemon.base).reduce((acc, val) => acc + val, 0);
   };
 
   return (
-    <div className="morestats">
-      {pokemonData && pokemonData.length > 0 && (
-        <>
-          <p>{pokemonData[0].id}</p>
-          <p>Name: {pokemonData[0].name.english}</p>
-          <p>Japanese Name: {pokemonData[0].name.japanese}</p>
-          <p>Chinese Name: {pokemonData[0].name.chinese}</p>
-          <p>French Name: {pokemonData[0].name.french}</p>
-          <p>Type: {pokemonData[0].type.join(', ')}</p>
-          <p>Total: {calculateTotal(pokemonData[0])}</p>
-          <p>HP: {pokemonData[0].base.HP}</p>
-          <p>Attack: {pokemonData[0].base.Attack}</p>
-          <p>Defense: {pokemonData[0].base.Defense}</p>
-          <p>Sp. Attack: {pokemonData[0].base["Sp. Attack"]}</p>
-          <p>Sp. Defense: {pokemonData[0].base["Sp. Defense"]}</p>
-          <p>Speed: {pokemonData[0].base.Speed}</p>
-        </>
-      )}
-      <button className="close" onClick={() => setOpenModel(false)}>X</button>
+    <div className={`modal ${pokemon ? 'open' : ''}`}>
+      <div className="modal-content">
+        <button className="close" onClick={() => setOpenModel(false)}>x</button>
+        {pokemon && (
+          <>
+            <img
+                id='pokemonimagemodal'
+                src={`https://img.pokemondb.net/artwork/${pokemon.name.english.includes(' ') ? pokemon.name.english.split(' ').join('-').toLowerCase() : pokemon.name.english.toLowerCase()}.jpg`}
+                alt={pokemon.name.english}
+              />
+            <p>Number: {pokemon.id}</p>
+            <p>Name: {pokemon.name.english}</p>
+            <p>Japanese Name: {pokemon.name.japanese}</p>
+            <p>Chinese Name: {pokemon.name.chinese}</p>
+            <p>French Name: {pokemon.name.french}</p>
+            <p>Type: {pokemon.type.join(', ')}</p>
+            <p>Total: {calculateTotal(pokemon)}</p>
+            <p>HP: {pokemon.base.HP}</p>
+            <p>Attack: {pokemon.base.Attack}</p>
+            <p>Defense: {pokemon.base.Defense}</p>
+            <p>Sp. Attack: {pokemon.base["Sp. Attack"]}</p>
+            <p>Sp. Defense: {pokemon.base["Sp. Defense"]}</p>
+            <p>Speed: {pokemon.base.Speed}</p>
+          </>
+        )}
+      </div>
     </div>
   );
 };
 
 export default PokemonInfo;
+

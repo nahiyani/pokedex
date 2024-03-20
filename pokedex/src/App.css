@@ -60,7 +60,7 @@ h4{
 }
 
 #searchbar{
-  width: 50%;
+  width: 60%;
   height: 50px;
   border-radius: 15px;
   border: none;
@@ -92,15 +92,15 @@ h4{
 
 .pokemon-table tr {
   border: 1px solid #000000;
-  border-radius: 5px;
   margin: 10px;
-  padding: 10px;
+  padding: 15px;
 }
 
 .pokemon-table th, .pokemon-table td {
-  padding: 15px; 
+  padding: 20px; 
   text-align: center;
   border: 0.5px solid #414040;
+  font-size: 18px;
 }
 
 .pokemon-table th {
@@ -130,7 +130,8 @@ h4{
   padding-left: 15px;
   padding-right: 15px;
   font-family: 'Raleway', sans-serif;
-  border: none
+  border: none;
+  font-size: 14px;
 }
 
 #typesort:hover{
@@ -139,7 +140,19 @@ h4{
 
 #pokemonimage{
   width: 40px;
-  height: 30px;
+  height: 40px;
+  border: none;
+  margin: auto;
+  display: block;
+}
+
+#type-colours{
+  padding: 5px;
+  border-radius: 15px; 
+  color: white;
+  margin-right: 5px; 
+  width: 100px;
+  font-weight: bold;
 }
 
 #more-details-button{
