@@ -19,25 +19,12 @@ function App() {
   const [filteredPokemonData, setFilteredPokemonData] = useState(null);
   const [totalItems, setTotalItems] = useState(0);
   const [filterOptions, setFilterOptions] = useState({ type: '', searchQuery: '' });
-  const [isModelOpen, setIsModelOpen] = useState(false); // State to control model visibility
+  const [isModelOpen, setIsModelOpen] = useState(false); 
 
   const handlePokemonDetailsClick = (pokemonId) => {
     setSelectedPokemonId(pokemonId);
     setSelectedPokemon(filteredPokemonData.find(pokemon => pokemon.id === pokemonId));
-    setIsModelOpen(true); // Open the model
-  };
-
-  const filterPokemon = () => {
-    if (pokemonData) {
-      const { type, searchQuery } = filterOptions;
-      const filteredData = pokemonData.filter(pokemon => {
-        const matchesType = type === '' || pokemon.type.includes(type);
-        const matchesSearch = searchQuery === '' || pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesType && matchesSearch;
-      });
-
-      setFilteredPokemonData(filteredData);
-    }
+    setIsModelOpen(true);
   };
 
   useEffect(() => {
@@ -50,22 +37,32 @@ function App() {
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
+  useEffect(() => {
+    if (pokemonData) {
+      const { type, searchQuery } = filterOptions;
+      const filteredData = pokemonData.filter(pokemon => {
+        const matchesType = type === '' || pokemon.type.includes(type);
+        const matchesSearch = searchQuery === '' || pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesType && matchesSearch;
+      });
+
+      setFilteredPokemonData(filteredData);
+      setTotalItems(filteredData.length);
+    }
+  }, [filterOptions, pokemonData]);
+
   const handleSort = (key) => {
     const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
   };
 
-  useEffect(() => {
-    filterPokemon();
-  }, [filterOptions, pokemonData]);
-
   return (
     <div className="App">
       <main>
         <div className="container">
-          <Search filterPokemon={filterPokemon} setSearchQuery={query => setFilterOptions(previousOptions => ({ ...previousOptions, searchQuery: query }))} />
+          <Search filterPokemon={setFilterOptions} />
           <TypeSort filterPokemon={type => setFilterOptions(previousOptions => ({ ...previousOptions, type }))} />
-          <TotalItemsCounter totalItems={totalItems} />
+          <p id='toptext'>Results Returned: {totalItems}</p>
           {filteredPokemonData ? (
             <>
               <PokemonTable
@@ -73,13 +70,11 @@ function App() {
                 onPokemonDetails={handlePokemonDetailsClick}
                 sortConfig={sortConfig}
                 handleSort={handleSort}
-                setTotalItems={setTotalItems}
-                setOpenModel={setIsModelOpen}
               />
               {isModelOpen && selectedPokemon && <PokemonInfo setOpenModel={setIsModelOpen} pokemonId={selectedPokemonId} />}
             </>
           ) : (
-            <p id='loading'>Loading...</p>
+            <p id='toptext'>Loading...</p>
           )}
         </div>
       </main>
@@ -87,11 +82,7 @@ function App() {
   );
 }
 
-function TotalItemsCounter({ totalItems }) {
-  return <p id='results-returned'>Results Returned: {totalItems}</p>;
-}
-
-function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, setTotalItems, setOpenModel }) {
+function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort }) {
   const { key, direction } = sortConfig;
 
   const sortingFunctions = {
@@ -105,10 +96,6 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, s
     spDefense: (a, b) => a.base['Sp. Defense'] - b.base['Sp. Defense'],
     speed: (a, b) => a.base.Speed - b.base.Speed,
   };
-
-  useEffect(() => {
-    setTotalItems(pokemonData.length);
-  }, [pokemonData, setTotalItems]);
 
   const sortedPokemonData = [...pokemonData].sort((a, b) => {
     const sortFunction = sortingFunctions[key];
@@ -139,9 +126,15 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, s
             <td>
               <img
                 id='pokemonimage'
-                src={`https://img.pokemondb.net/artwork/${pokemon.name.english.includes(' ') ? pokemon.name.english.split(' ').join('-').toLowerCase() : pokemon.name.english.toLowerCase()}.jpg`}
-                alt={pokemon.name.english}
-              />
+                src={`https://img.pokemondb.net/artwork/${pokemon.id === 29 ? 'nidoran-f' : 
+                    pokemon.id === 32 ? 'nidoran-m' :
+                    pokemon.id === 83 ? 'farfetchd' :
+                    pokemon.id === 122 ? 'mr-mime' :
+                    pokemon.id === 439 ? 'mime-jr' :
+                    pokemon.id === 669 ? 'flabebe' :
+                    pokemon.id === 772 ? 'type-null' :
+                    (pokemon.name.english.includes(' ') ? pokemon.name.english.split(' ').join('-').toLowerCase() : pokemon.name.english.toLowerCase())}.jpg`}
+                alt={pokemon.name.english}/>
             </td>
             <td>{pokemon.id}</td>
             <td>{pokemon.name.english}</td>

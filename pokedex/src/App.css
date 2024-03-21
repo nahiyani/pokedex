@@ -1,3 +1,4 @@
+/*CSS that applies to all parts*/
 html {
   background-color: rgb(76, 143, 245);
 }
@@ -12,6 +13,7 @@ body{
   justify-content: center;
 }
 
+/*title*/
 #title{
   font-size: 50px;
   color: #FFFFFF;
@@ -31,18 +33,7 @@ body{
   }
 }
 
-h4{
-  font-size: 25px;
-  color: #FFFFFF;
-  display: inline;
-  width: 100%;
-}
-
-#stat{
-  background-color: white;
-  border-radius: 15px;
-  border: solid 2px black;
-}
+/*serchbar*/
 
 #search{
   display: flex;
@@ -69,53 +60,7 @@ h4{
   font-size: 14px;
 }
 
-#loading{
-  color: white;
-  text-align: center;
-  font-size: 25px;
-  font-weight: bold;
-}
-
-#results-returned{
-  color: white;
-  text-align: center;
-  font-size: 25px;
-  font-weight: bold;
-  padding-bottom: 10px;
-}
-
-.pokemon-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #ffffff;
-}
-
-.pokemon-table tr {
-  border: 1px solid #000000;
-  margin: 10px;
-  padding: 15px;
-}
-
-.pokemon-table th, .pokemon-table td {
-  padding: 20px; 
-  text-align: center;
-  border: 0.5px solid #414040;
-  font-size: 18px;
-}
-
-.pokemon-table th {
-  background-color: #e3e1e1; 
-}
-
-#default-header{
-  cursor:default;
-}
-
-.pokemon-table th:hover {
-  cursor: pointer;
-  background-color: #aca5a5;
-}
-
+/*dropdown menu for sorting by type*/
 #typesort-div{
   display: flex;
   justify-content: center;
@@ -138,6 +83,50 @@ h4{
   cursor: pointer;
 }
 
+/*loading and results-returned text */
+#toptext{
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+/*main pokedex */
+.pokemon-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+.pokemon-table th {
+  background-color: #e3e1e1; 
+}
+
+.pokemon-table tr {
+  border: 1px solid #000000;
+  margin: 10px;
+  padding: 15px;
+}
+
+.pokemon-table th, .pokemon-table td {
+  padding: 20px; 
+  text-align: center;
+  border: 0.5px solid #414040;
+  font-size: 18px;
+}
+
+.pokemon-table th:hover {
+  cursor: pointer;
+  background-color: #aca5a5;
+}
+
+/*cursor behaviour for the columns that can't be sorted*/
+#default-header{
+  cursor: default;
+}
+
+/*small pokemon image in table*/
 #pokemonimage{
   width: 40px;
   height: 40px;
@@ -146,6 +135,7 @@ h4{
   display: block;
 }
 
+/*colours that change depending on type */
 #type-colours{
   padding: 5px;
   border-radius: 15px; 
@@ -155,6 +145,7 @@ h4{
   font-weight: bold;
 }
 
+/*more button in table */
 #more-details-button{
   background-color:rgb(76, 143, 245);
   border-radius: 10px;
@@ -176,6 +167,7 @@ h4{
   font-family: 'Raleway', sans-serif;
 }
 
+/*footer*/
 #footer{
   padding: 20px;
   display: flex;
@@ -184,6 +176,6 @@ h4{
   background-color:rgb(76, 143, 245);
 }
 
-h3{
+#footer h3{
   color: white;
 }
