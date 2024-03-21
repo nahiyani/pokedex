@@ -24,7 +24,20 @@ function App() {
   const handlePokemonDetailsClick = (pokemonId) => {
     setSelectedPokemonId(pokemonId);
     setSelectedPokemon(filteredPokemonData.find(pokemon => pokemon.id === pokemonId));
-    setIsModelOpen(true);
+    setIsModelOpen(true); 
+  };
+
+  const filterPokemon = () => {
+    if (pokemonData) {
+      const { type, searchQuery } = filterOptions;
+      const filteredData = pokemonData.filter(pokemon => {
+        const matchesType = type === '' || pokemon.type.includes(type);
+        const matchesSearch = searchQuery === '' || pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesType && matchesSearch;
+      });
+
+      setFilteredPokemonData(filteredData);
+    }
   };
 
   useEffect(() => {
@@ -37,32 +50,22 @@ function App() {
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
-  useEffect(() => {
-    if (pokemonData) {
-      const { type, searchQuery } = filterOptions;
-      const filteredData = pokemonData.filter(pokemon => {
-        const matchesType = type === '' || pokemon.type.includes(type);
-        const matchesSearch = searchQuery === '' || pokemon.name.english.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesType && matchesSearch;
-      });
-
-      setFilteredPokemonData(filteredData);
-      setTotalItems(filteredData.length);
-    }
-  }, [filterOptions, pokemonData]);
-
   const handleSort = (key) => {
     const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
   };
 
+  useEffect(() => {
+    filterPokemon();
+  }, [filterOptions, pokemonData]);
+
   return (
     <div className="App">
       <main>
         <div className="container">
-          <Search filterPokemon={setFilterOptions} />
+          <Search filterPokemon={filterPokemon} setSearchQuery={query => setFilterOptions(previousOptions => ({ ...previousOptions, searchQuery: query }))} />
           <TypeSort filterPokemon={type => setFilterOptions(previousOptions => ({ ...previousOptions, type }))} />
-          <p id='toptext'>Results Returned: {totalItems}</p>
+          <TotalItemsCounter totalItems={totalItems} />
           {filteredPokemonData ? (
             <>
               <PokemonTable
@@ -70,6 +73,8 @@ function App() {
                 onPokemonDetails={handlePokemonDetailsClick}
                 sortConfig={sortConfig}
                 handleSort={handleSort}
+                setTotalItems={setTotalItems}
+                setOpenModel={setIsModelOpen}
               />
               {isModelOpen && selectedPokemon && <PokemonInfo setOpenModel={setIsModelOpen} pokemonId={selectedPokemonId} />}
             </>
@@ -82,7 +87,11 @@ function App() {
   );
 }
 
-function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort }) {
+function TotalItemsCounter({ totalItems }) {
+  return <p id='toptext'>Results Returned: {totalItems}</p>;
+}
+
+function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort, setTotalItems, setOpenModel }) {
   const { key, direction } = sortConfig;
 
   const sortingFunctions = {
@@ -96,6 +105,10 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort })
     spDefense: (a, b) => a.base['Sp. Defense'] - b.base['Sp. Defense'],
     speed: (a, b) => a.base.Speed - b.base.Speed,
   };
+
+  useEffect(() => {
+    setTotalItems(pokemonData.length);
+  }, [pokemonData, setTotalItems]);
 
   const sortedPokemonData = [...pokemonData].sort((a, b) => {
     const sortFunction = sortingFunctions[key];
@@ -123,18 +136,18 @@ function PokemonTable({ pokemonData, onPokemonDetails, sortConfig, handleSort })
       <tbody>
         {sortedPokemonData.map(pokemon => (
           <tr key={pokemon.id}>
-            <td>
-              <img
-                id='pokemonimage'
-                src={`https://img.pokemondb.net/artwork/${pokemon.id === 29 ? 'nidoran-f' : 
-                    pokemon.id === 32 ? 'nidoran-m' :
-                    pokemon.id === 83 ? 'farfetchd' :
-                    pokemon.id === 122 ? 'mr-mime' :
-                    pokemon.id === 439 ? 'mime-jr' :
-                    pokemon.id === 669 ? 'flabebe' :
-                    pokemon.id === 772 ? 'type-null' :
-                    (pokemon.name.english.includes(' ') ? pokemon.name.english.split(' ').join('-').toLowerCase() : pokemon.name.english.toLowerCase())}.jpg`}
-                alt={pokemon.name.english}/>
+           <td>
+                  <img
+                    id='pokemonimage'
+                    src={`https://img.pokemondb.net/artwork/${pokemon.id === 29 ? 'nidoran-f' : 
+                        pokemon.id === 32 ? 'nidoran-m' :
+                        pokemon.id === 83 ? 'farfetchd' :
+                        pokemon.id === 122 ? 'mr-mime' :
+                        pokemon.id === 439 ? 'mime-jr' :
+                        pokemon.id === 669 ? 'flabebe' :
+                        pokemon.id === 772 ? 'type-null' :
+                        (pokemon.name.english.includes(' ') ? pokemon.name.english.split(' ').join('-').toLowerCase() : pokemon.name.english.toLowerCase())}.jpg`}
+                    alt={pokemon.name.english}/>
             </td>
             <td>{pokemon.id}</td>
             <td>{pokemon.name.english}</td>
